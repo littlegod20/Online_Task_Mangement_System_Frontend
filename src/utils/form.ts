@@ -1,6 +1,6 @@
 export const handleInputChange = <T extends object>(
   e: React.ChangeEvent<HTMLInputElement>,
-  setData: React.Dispatch<React.SetStateAction<T>>
+  setData: React.Dispatch<React.SetStateAction<T>>,
 ) => {
   const { name, value } = e.target;
 
@@ -8,4 +8,6 @@ export const handleInputChange = <T extends object>(
     ...prevData,
     [name]: value,
   }));
+
+  console.log('name:',name,'value:',value)
 };

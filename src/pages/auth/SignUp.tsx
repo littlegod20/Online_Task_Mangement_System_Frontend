@@ -1,7 +1,7 @@
 import Button from "../../components/common/Button";
 import Input from "../../components/common/Input";
-import { Link } from "react-router-dom";
-import { formInputs } from "../../utils/constants";
+import { Link, useNavigate } from "react-router-dom";
+import { formInputs, userData } from "../../utils/constants";
 import { handleInputChange } from "../../utils/form";
 import { useEffect, useState } from "react";
 import { AuthProps } from "../../types/auth.types";
@@ -11,33 +11,32 @@ import { postUserData } from "../../state/authSlice";
 import { isFormDataComplete } from "../../helpers";
 
 const SignUp = () => {
-  const [formData, setFormData] = useState<AuthProps>({
-    username: "",
-    email: "",
-    password: "",
-    role: null,
-  });
+  const [formData, setFormData] = useState<AuthProps>(userData);
   const dispatch = useDispatch<AppDispatch>();
   const { status, error } = useSelector((state: RootState) => state.auth);
+
+  const navigate = useNavigate()
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       if (isFormDataComplete(formData)) {
-        const response = await dispatch(postUserData(formData)).unwrap()
-        console.log('Server response:', response)
+        const response = await dispatch(postUserData(formData)).unwrap();
+        console.log("Server response:", response);
+        navigate('/login')
+        setFormData(userData);
       } else {
         console.log("Please fill in all fields.");
       }
     } catch (error) {
-      console.error(error instanceof Error ? error.message : error);
-    }
+      console.error("Error:", error);
+    } 
   };
 
-  useEffect(()=>{
-    console.log('status:',status)
-    console.log('error:', error)
-  })
+  useEffect(() => {
+    console.log("status:", status);
+    console.log("error:", error);
+  });
 
   return (
     <main className="w-full flex flex-col p-10 justify-center items-center min-h-screen">
@@ -57,11 +56,12 @@ const SignUp = () => {
               key={index}
               onChange={(e) => handleInputChange(e, setFormData)}
               name={item.label}
+              value={formData[item.label as keyof AuthProps]}
               placeholder={item.placeholder}
             />
           ))}
           <div className="w-2/3 lg:w-1/3 pt-4 text-center">
-            <Button title="Sign In" />
+            <Button title="Sign In" loadingTitle="Signing In..." disabled={status==='loading'} />
             <p className="text-sm pt-3 text-slate-500">
               Already signed up? login in{" "}
               <Link

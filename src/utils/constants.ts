@@ -1,3 +1,12 @@
+import { AuthProps } from "../types/auth.types";
+
+export const userData:AuthProps = {
+  username:'',
+  email:'',
+  password:'',
+  role:""
+}
+
 export const formInputs = [
   {
     label: "username",
@@ -13,7 +22,7 @@ export const formInputs = [
   },
   {
     label: "role",
-    placeholder: "eg. User or Admin",
+    placeholder: "eg. user or admin",
   },
 ];
 

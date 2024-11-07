@@ -1,10 +1,11 @@
 interface InputProps {
   name: string;
   placeholder: string;
+  value:string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const Input: React.FC<InputProps> = ({ name, placeholder, onChange }) => {
+const Input: React.FC<InputProps> = ({ name, placeholder, onChange, value }) => {
   return (
     <div className="flex flex-col space-y-2 w-full sm:w-[400px]">
       <label id={name} htmlFor={name} className="text-red-950">
@@ -13,6 +14,7 @@ const Input: React.FC<InputProps> = ({ name, placeholder, onChange }) => {
       <input
         id={name}
         name={name}
+        value={value}
         placeholder={placeholder}
         onChange={onChange}
         className="w-full border rounded p-2 focus-visible:ring-1 focus-visible:outline-none focus-visible:ring-red-900"
