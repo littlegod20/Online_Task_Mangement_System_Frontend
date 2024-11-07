@@ -1,18 +1,34 @@
 export const formInputs = [
   {
-    label: "Name",
+    label: "username",
     placeholder: "eg. John Doe",
   },
   {
-    label: "Email",
+    label: "email",
     placeholder: "eg. johndoe@gmail.com",
   },
   {
-    label: "Password",
+    label: "password",
     placeholder: "Enter strong password",
   },
   {
-    label: "Role",
+    label: "role",
     placeholder: "eg. User or Admin",
+  },
+];
+
+
+export const LogInformInputs = [
+  {
+    label: "username",
+    placeholder: "eg. John Doe",
+  },
+  {
+    label: "email",
+    placeholder: "eg. johndoe@gmail.com",
+  },
+  {
+    label: "password",
+    placeholder: "Enter strong password",
   },
 ];

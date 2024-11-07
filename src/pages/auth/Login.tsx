@@ -1,23 +1,32 @@
 import { Link } from "react-router-dom";
 import Button from "../../components/common/Button";
 import Input from "../../components/common/Input";
-
-const formInputs = [
-  {
-    label: "Name",
-    placeholder: "eg. John Doe",
-  },
-  {
-    label: "Email",
-    placeholder: "eg. johndoe@gmail.com",
-  },
-  {
-    label: "Password",
-    placeholder: "Enter strong password",
-  },
-];
+import { LogInformInputs } from "../../utils/constants";
+import { useState } from "react";
+import { AuthProps } from "../../types/auth.types";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../state/store";
+import { postUserData } from "../../state/authSlice";
+import { handleInputChange } from "../../utils/form";
 
 const Login = () => {
+  const [formData, setFormData] = useState<AuthProps>({
+    username: "",
+    email: "",
+    password: "",
+    role: "user",
+  });
+  const dispatch = useDispatch<AppDispatch>();
+  // const { status, error } = useSelector((state: RootState) => state.auth);
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (formData) {
+      dispatch(postUserData(formData));
+    }
+    return;
+  };
+
   return (
     <main className="w-full flex flex-col p-10 justify-center items-center min-h-screen">
       <section className="w-full lg:w-1/2  flex flex-col justify-center ">
@@ -27,10 +36,18 @@ const Login = () => {
             Login here if you've already signed up.
           </p>
         </div>
-        <form className="w-full p-3 space-y-3 flex flex-col justify-center items-center">
-          {formInputs.map((item) => (
+        <form
+          className="w-full p-3 space-y-3 flex flex-col justify-center items-center"
+          onSubmit={handleSubmit}
+        >
+          {LogInformInputs.map((item, index) => (
             <>
-              <Input name={item.label} placeholder={item.placeholder} />
+              <Input
+                key={index}
+                name={item.label}
+                placeholder={item.placeholder}
+                onChange={(e) => handleInputChange(e, setFormData)}
+              />
             </>
           ))}
 
@@ -39,7 +56,7 @@ const Login = () => {
             <p className="text-sm pt-3 text-slate-500">
               Don't have an account? sign up{" "}
               <Link
-                to={"/signup"}
+                to={"/"}
                 className="text-red-900 font-medium hover:underline hover:cursor-pointer"
               >
                 here

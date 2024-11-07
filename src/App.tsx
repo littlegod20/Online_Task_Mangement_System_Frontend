@@ -10,7 +10,7 @@ function App() {
         <Routes>
           {/* these are public Routes */}
           <Route path="/" element={<MainLayout />}>
-            <Route path="/signup" index element={<SignUp />} />
+            <Route index element={<SignUp />} />
             <Route path="/login" element={<Login />} />
           </Route>
         </Routes>
