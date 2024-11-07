@@ -5,21 +5,26 @@ import { AuthProps } from "../types/auth.types";
 interface AuthState extends AuthProps {
   status: "idle" | "loading" | "succeeded" | "failed";
   error: unknown;
+  token: string;
 }
 
 const initialState: AuthState = {
   username: "",
   email: "",
   password: "",
-  role: "",
+  role: "user",
   status: "idle",
   error: null,
+  token: "",
 };
 
 const authSlice = createSlice({
   name: "authentication",
   initialState,
   reducers: {
+    setToken: (state, action: PayloadAction<string>) => {
+      state.token = action.payload;
+    },
     logout(state) {
       state.username = "";
     },
@@ -35,6 +40,7 @@ const authSlice = createSlice({
           state.status = "succeeded";
           state.username = action.payload;
           state.error = null;
+          state.token = action.payload
         }
       )
       .addCase(
@@ -43,20 +49,40 @@ const authSlice = createSlice({
           state.status = "failed";
           state.error = action.payload;
         }
-      );
+      )
   },
 });
 
 export const postUserData = createAsyncThunk(
   "authentication/postUserData",
-  async (userData: AuthProps, thunkApi) => {
+  async (
+    {
+      userData,
+      type,
+    }: {
+      userData: AuthProps | Partial<AuthProps> | null;
+      type: "signup" | "login";
+    },
+    thunkApi
+  ) => {
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/auth/signUp",
-        userData
-      );
-      console.log("User data submitted successfully");
-      return response.data;
+      if (type === "signup") {
+        const response = await axios.post(
+          "http://localhost:5000/api/auth/signUp",
+          userData
+        );
+        console.log("User data submitted successfully");
+        return response.data;
+      } else if (type === "login") {
+        const response = await axios.post(
+          "http://localhost:5000/api/auth/login",
+          userData
+        );
+        console.log("User data submitted successfully");
+        const token = response.data.accesstoken;
+        localStorage.setItem("acessToken", token);
+        return token;
+      }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response) {
@@ -84,5 +110,5 @@ export const postUserData = createAsyncThunk(
     }
   }
 );
-
+export const {setToken} = authSlice.actions;
 export default authSlice.reducer;
