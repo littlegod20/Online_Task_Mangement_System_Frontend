@@ -1,23 +1,49 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Button from "../../components/common/Button";
 import Input from "../../components/common/Input";
-
-const formInputs = [
-  {
-    label: "Name",
-    placeholder: "eg. John Doe",
-  },
-  {
-    label: "Email",
-    placeholder: "eg. johndoe@gmail.com",
-  },
-  {
-    label: "Password",
-    placeholder: "Enter strong password",
-  },
-];
+import { LogInformInputs, userData } from "../../utils/constants";
+import { useEffect, useState } from "react";
+import { AuthProps } from "../../types/auth.types";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../state/store";
+import { postUserData } from "../../state/slices/authSlice";
+import { handleInputChange } from "../../utils/form";
+import { isFormDataComplete } from "../../utils/helpers";
 
 const Login = () => {
+  const [formData, setFormData] = useState<Partial<AuthProps>>({
+    username: "",
+    password: "",
+    email: "",
+  });
+  const dispatch = useDispatch<AppDispatch>();
+  const { status, error } = useSelector((state: RootState) => state.auth);
+
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      if (isFormDataComplete(formData)) {
+        const response = await dispatch(
+          postUserData({ userData: formData, type: "login" })
+        ).unwrap();
+        setFormData(userData);
+        navigate("/home");
+        return response;
+      } else {
+        console.log("Please fill in all fields.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  useEffect(() => {
+    console.log("error:", error);
+    console.log("status:", status);
+  });
+
   return (
     <main className="w-full flex flex-col p-10 justify-center items-center min-h-screen">
       <section className="w-full lg:w-1/2  flex flex-col justify-center ">
@@ -27,19 +53,33 @@ const Login = () => {
             Login here if you've already signed up.
           </p>
         </div>
-        <form className="w-full p-3 space-y-3 flex flex-col justify-center items-center">
-          {formInputs.map((item) => (
-            <>
-              <Input name={item.label} placeholder={item.placeholder} />
-            </>
+        <form
+          className="w-full p-3 space-y-3 flex flex-col justify-center items-center"
+          onSubmit={handleSubmit}
+        >
+          {LogInformInputs.map((item, index) => (
+            <div className="sm:w-[400px]">
+              <Input
+                key={index}
+                name={item.label}
+                placeholder={item.placeholder}
+                value={formData[item.label as keyof AuthProps]}
+                onChange={(e) => handleInputChange(e, setFormData)}
+              />
+            </div>
           ))}
 
           <div className="w-2/3 lg:w-1/3 pt-4 text-center">
-            <Button title="Log In" />
+            <Button
+              title="Log In"
+              loadingTitle="Logging In..."
+              disabled={status === "loading"}
+            />
+
             <p className="text-sm pt-3 text-slate-500">
               Don't have an account? sign up{" "}
               <Link
-                to={"/signup"}
+                to={"/"}
                 className="text-red-900 font-medium hover:underline hover:cursor-pointer"
               >
                 here
