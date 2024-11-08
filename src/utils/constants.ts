@@ -56,12 +56,12 @@ export const taskForm = [
     label: "date",
     placeholder: "deadline of submision",
     type: "date",
-  }
+  },
 ];
 
 export const taskData = {
   title: "",
   description: "",
-  date: new Date("2024-04-24"),
+  date: new Date(),
   status: "pending" as const,
 };

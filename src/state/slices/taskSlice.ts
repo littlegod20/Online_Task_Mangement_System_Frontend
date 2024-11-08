@@ -1,50 +1,64 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { TaskProps } from "../../pages/common/Home"
-import { postProtectedData } from "../../services/api.services"
-import axios from "axios"
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { TaskProps } from "../../pages/common/Home";
+import {
+  fetchProtectedData,
+  postProtectedData,
+} from "../../services/api.services";
+import axios from "axios";
 
-
-interface TaskState extends Partial<TaskProps> {
-  taskState: "idle" | "loading" | "succeeded" | "failed",
+interface TaskState {
+  tasks: TaskProps[];
+  status: "idle" | "loading" | "succeeded" | "failed";
   error: unknown;
-  msg:string
+  msg: string;
 }
 
-const initialState:TaskState = {
-  title:'',
-  description:'',
-  status:'pending',
-  msg:'',
+const initialState: TaskState = {
+  tasks: [],
   error: null,
-  taskState:'idle'
-}
-
+  status: "idle",
+  msg: "",
+};
 
 const taskSlice = createSlice({
   name: "tasks",
   initialState,
-  reducers:{
-    setMessage: (state, action:PayloadAction<string>)=>{
-      state.msg = action.payload
-    }
+  reducers: {
+    setMessage: (state, action: PayloadAction<string>) => {
+      state.msg = action.payload;
+    },
   },
 
-  extraReducers:(builder)=>{
-    builder.addCase(postTaskData.pending, (state)=>{
-      state.taskState = "loading"
-    }).addCase(postTaskData.fulfilled, (state, action:PayloadAction<string>)=>{
-      state.taskState = "succeeded"
-      state.msg = action.payload
-      state.error = null
-    }).addCase(postTaskData.rejected, (state, action:PayloadAction<unknown>)=>{
-      state.taskState = "failed"
-      state.error = action.payload
-    })
-  }
-})
+  extraReducers: (builder) => {
+    builder
+      .addCase(postTaskData.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(
+        postTaskData.fulfilled,
+        (state, action: PayloadAction<string>) => {
+          state.status = "succeeded";
+          state.msg = action.payload;
+          state.error = null;
+        }
+      )
+      .addCase(
+        postTaskData.rejected,
+        (state, action: PayloadAction<unknown>) => {
+          state.status = "failed";
+          state.error = action.payload;
+        }
+      );
+  },
+});
 
+// fetching tasks
+export const fetchTasks = createAsyncThunk("tasks/fetchTasks", async () => {
+  const response = await fetchProtectedData("/tasks");
+  return response.data;
+});
 
-
+// creating a task
 export const postTaskData = createAsyncThunk(
   "tasks/postTaskData",
   async (taskData: TaskProps, thunkApi) => {
@@ -80,6 +94,5 @@ export const postTaskData = createAsyncThunk(
   }
 );
 
-
-export default taskSlice.reducer
-export const {setMessage} = taskSlice.actions
+export default taskSlice.reducer;
+export const { setMessage } = taskSlice.actions;

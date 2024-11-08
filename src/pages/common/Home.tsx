@@ -22,7 +22,7 @@ const Home = () => {
   const [taskFormData, setTaskFormData] = useState<TaskProps>(taskData);
   const [isClicked, setIsClicked] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
-  const { taskState, error } = useSelector((state: RootState) => state.task);
+  const { status, error } = useSelector((state: RootState) => state.task);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -43,7 +43,7 @@ const Home = () => {
 
   useEffect(() => {
     console.log("error:", error);
-    console.log("status:", taskState);
+    console.log("status:", status);
   });
 
   return (
@@ -58,7 +58,7 @@ const Home = () => {
           title="Add Task"
         >
           <section>
-            <form className="space-y-3" onSubmit={handleSubmit}>
+            <form className="space-y-3 bg-white w-full" onSubmit={handleSubmit}>
               {taskForm.map((item, index) => (
                 <Input
                   key={index}
@@ -71,7 +71,7 @@ const Home = () => {
               ))}
 
               <Select setTaskFormData={setTaskFormData} />
-              <Button title="Submit" disabled={taskState === 'loading'} loadingTitle="Submitting..." />
+              <Button title="Submit" disabled={status === 'loading'} loadingTitle="Submitting..." />
             </form>
           </section>
         </Modal>
@@ -81,7 +81,7 @@ const Home = () => {
           <TaskCard
             title="title"
             description="description"
-            dueDate="20th July"
+            date={new Date()}
             status="completed"
           />
         </div>
