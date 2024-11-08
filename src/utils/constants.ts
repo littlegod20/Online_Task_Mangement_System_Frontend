@@ -1,11 +1,11 @@
 import { AuthProps } from "../types/auth.types";
 
-export const userData:AuthProps = {
-  username:'',
-  email:'',
-  password:'',
-  role:""
-}
+export const userData: AuthProps = {
+  username: "",
+  email: "",
+  password: "",
+  role: "user",
+};
 
 export const formInputs = [
   {
@@ -26,7 +26,6 @@ export const formInputs = [
   },
 ];
 
-
 export const LogInformInputs = [
   {
     label: "username",
@@ -41,3 +40,28 @@ export const LogInformInputs = [
     placeholder: "Enter strong password",
   },
 ];
+
+export const taskForm = [
+  {
+    label: "title",
+    placeholder: "title of task",
+    type: "text",
+  },
+  {
+    label: "description",
+    placeholder: "decribe task",
+    type: "text",
+  },
+  {
+    label: "date",
+    placeholder: "deadline of submision",
+    type: "date",
+  }
+];
+
+export const taskData = {
+  title: "",
+  description: "",
+  date: new Date("2024-04-24"),
+  status: "pending" as const,
+};

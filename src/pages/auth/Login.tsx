@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { AuthProps } from "../../types/auth.types";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../state/store";
-import { postUserData } from "../../state/authSlice";
+import { postUserData } from "../../state/slices/authSlice";
 import { handleInputChange } from "../../utils/form";
 import { isFormDataComplete } from "../../utils/helpers";
 
@@ -28,9 +28,9 @@ const Login = () => {
         const response = await dispatch(
           postUserData({ userData: formData, type: "login" })
         ).unwrap();
-        console.log("Server response:", response);
-        navigate("/home");
         setFormData(userData);
+        navigate("/home");
+        return response;
       } else {
         console.log("Please fill in all fields.");
       }
@@ -39,10 +39,10 @@ const Login = () => {
     }
   };
 
-  useEffect(()=>{
-    console.log('error:', error)
-    console.log('status:', status)
-  })
+  useEffect(() => {
+    console.log("error:", error);
+    console.log("status:", status);
+  });
 
   return (
     <main className="w-full flex flex-col p-10 justify-center items-center min-h-screen">
@@ -58,17 +58,23 @@ const Login = () => {
           onSubmit={handleSubmit}
         >
           {LogInformInputs.map((item, index) => (
-            <Input
-              key={index}
-              name={item.label}
-              placeholder={item.placeholder}
-              value={formData[item.label as keyof AuthProps]}
-              onChange={(e) => handleInputChange(e, setFormData)}
-            />
+            <div className="sm:w-[400px]">
+              <Input
+                key={index}
+                name={item.label}
+                placeholder={item.placeholder}
+                value={formData[item.label as keyof AuthProps]}
+                onChange={(e) => handleInputChange(e, setFormData)}
+              />
+            </div>
           ))}
 
           <div className="w-2/3 lg:w-1/3 pt-4 text-center">
-            <Button title="Log In" disabled={status === "loading"} />
+            <Button
+              title="Log In"
+              loadingTitle="Logging In..."
+              disabled={status === "loading"}
+            />
 
             <p className="text-sm pt-3 text-slate-500">
               Don't have an account? sign up{" "}

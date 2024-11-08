@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
-import { AuthProps } from "../types/auth.types";
+import { AuthProps } from "../../types/auth.types";
 
 interface AuthState extends AuthProps {
   status: "idle" | "loading" | "succeeded" | "failed";
@@ -27,6 +27,7 @@ const authSlice = createSlice({
     },
     logout(state) {
       state.username = "";
+      state.email = "";
     },
   },
   extraReducers: (builder) => {
@@ -38,9 +39,8 @@ const authSlice = createSlice({
         postUserData.fulfilled,
         (state, action: PayloadAction<string>) => {
           state.status = "succeeded";
-          state.username = action.payload;
           state.error = null;
-          state.token = action.payload
+          state.token = action.payload;
         }
       )
       .addCase(
@@ -49,9 +49,11 @@ const authSlice = createSlice({
           state.status = "failed";
           state.error = action.payload;
         }
-      )
+      );
   },
 });
+
+
 
 export const postUserData = createAsyncThunk(
   "authentication/postUserData",
@@ -80,14 +82,14 @@ export const postUserData = createAsyncThunk(
         );
         console.log("User data submitted successfully");
         const token = response.data.accesstoken;
-        localStorage.setItem("acessToken", token);
+        localStorage.setItem("accessToken", token);
         return token;
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response) {
           return thunkApi.rejectWithValue({
-            message: error.response.data.msg,
+            message: error.response.data,
             status: error.response.status,
           });
         } else if (error.request) {
@@ -110,5 +112,5 @@ export const postUserData = createAsyncThunk(
     }
   }
 );
-export const {setToken} = authSlice.actions;
+export const { setToken } = authSlice.actions;
 export default authSlice.reducer;
