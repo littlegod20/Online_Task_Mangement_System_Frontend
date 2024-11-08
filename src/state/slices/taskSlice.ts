@@ -9,14 +9,18 @@ import axios from "axios";
 interface TaskState {
   tasks: TaskProps[];
   status: "idle" | "loading" | "succeeded" | "failed";
+  fetchStatus: "idle" | "loading" | "succeeded" | "failed";
+  fetchError: unknown;
   error: unknown;
-  msg: string;
+  msg: string | boolean;
 }
 
 const initialState: TaskState = {
   tasks: [],
   error: null,
   status: "idle",
+  fetchStatus: "idle",
+  fetchError: null,
   msg: "",
 };
 
@@ -24,8 +28,9 @@ const taskSlice = createSlice({
   name: "tasks",
   initialState,
   reducers: {
-    setMessage: (state, action: PayloadAction<string>) => {
-      state.msg = action.payload;
+    resetFetchTaskStatus: (state) => {
+      state.fetchStatus = "idle";
+      state.fetchError = null;
     },
   },
 
@@ -36,9 +41,9 @@ const taskSlice = createSlice({
       })
       .addCase(
         postTaskData.fulfilled,
-        (state, action: PayloadAction<string>) => {
+        (state, action: PayloadAction<{ success: boolean | string }>) => {
           state.status = "succeeded";
-          state.msg = action.payload;
+          state.msg = action.payload.success;
           state.error = null;
         }
       )
@@ -48,14 +53,33 @@ const taskSlice = createSlice({
           state.status = "failed";
           state.error = action.payload;
         }
-      );
+      )
+      .addCase(fetchTasks.pending, (state) => {
+        state.fetchStatus = "loading";
+      })
+      .addCase(
+        fetchTasks.fulfilled,
+        (
+          state,
+          action: PayloadAction<{ success: string | boolean; tasks: [] }>
+        ) => {
+          state.msg = action.payload.success;
+          state.tasks = action.payload.tasks;
+          state.error = null;
+        }
+      )
+      .addCase(fetchTasks.rejected, (state, action: PayloadAction<unknown>) => {
+        state.fetchStatus = "failed";
+        state.fetchError = action.payload;
+      });
   },
 });
 
 // fetching tasks
 export const fetchTasks = createAsyncThunk("tasks/fetchTasks", async () => {
   const response = await fetchProtectedData("/tasks");
-  return response.data;
+  console.log("from fetchtasks:", response);
+  return response;
 });
 
 // creating a task
@@ -95,4 +119,4 @@ export const postTaskData = createAsyncThunk(
 );
 
 export default taskSlice.reducer;
-export const { setMessage } = taskSlice.actions;
+export const { resetFetchTaskStatus } = taskSlice.actions;

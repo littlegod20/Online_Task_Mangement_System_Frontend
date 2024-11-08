@@ -8,7 +8,7 @@ import { handleInputChange } from "../../utils/form";
 import { isFormDataComplete } from "../../utils/helpers";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../state/store";
-import { postTaskData } from "../../state/slices/taskSlice";
+import { fetchTasks, postTaskData, resetFetchTaskStatus } from "../../state/slices/taskSlice";
 import Select from "../../components/Select";
 
 export interface TaskProps {
@@ -22,7 +22,9 @@ const Home = () => {
   const [taskFormData, setTaskFormData] = useState<TaskProps>(taskData);
   const [isClicked, setIsClicked] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
-  const { status, error } = useSelector((state: RootState) => state.task);
+  const { status, error, tasks, fetchStatus } = useSelector(
+    (state: RootState) => state.task
+  );
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -31,6 +33,11 @@ const Home = () => {
       if (isFormDataComplete(taskFormData)) {
         const response = await dispatch(postTaskData(taskFormData));
         console.log("response Payload:", response);
+
+        // after task data submission, refresh the task list
+        await dispatch(fetchTasks());
+
+        // then reset the form fields
         setTaskFormData(taskData);
         return response.payload;
       } else {
@@ -41,16 +48,29 @@ const Home = () => {
     }
   };
 
+
+  useEffect(()=>{
+    if(fetchStatus === 'succeeded'){
+      setTaskFormData(taskData)
+    };
+    // resetting the redux status after successfull fetching
+    dispatch(resetFetchTaskStatus())
+
+    dispatch(fetchTasks())
+
+  }, [dispatch, fetchStatus])
+
   useEffect(() => {
     console.log("error:", error);
     console.log("status:", status);
+    console.log("tasks:", tasks);
   });
 
   return (
-    <main>
+    <main className="w-full">
       <section className="p-5">
         <div className="w-16">
-          <Button title="+" onClick={()=> setIsClicked(!isClicked)} />
+          <Button title="+" onClick={() => setIsClicked(!isClicked)} />
         </div>
         <Modal
           isOpen={isClicked}
@@ -71,19 +91,26 @@ const Home = () => {
               ))}
 
               <Select setTaskFormData={setTaskFormData} />
-              <Button title="Submit" disabled={status === 'loading'} loadingTitle="Submitting..." />
+              <Button
+                title="Submit"
+                disabled={status === "loading"}
+                loadingTitle="Submitting..."
+              />
             </form>
           </section>
         </Modal>
       </section>
-      <section>
-        <div>
-          <TaskCard
-            title="title"
-            description="description"
-            date={new Date()}
-            status="completed"
-          />
+      <section className="w-full">
+        <div className="flex flex-wrap gap-5 w-full">
+          {tasks.map((item, index) => (
+            <TaskCard
+              title={item.title}
+              description={item.description}
+              date={new Date()}
+              status={item.status}
+              key={index}
+            />
+          ))}
         </div>
       </section>
     </main>
