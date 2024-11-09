@@ -97,7 +97,7 @@ export const postTaskData = createAsyncThunk(
   async (taskData: TaskProps, thunkApi) => {
     try {
       const response = await postProtectedData("/tasks", taskData);
-
+      console.log('postedTask', response)
       return response;
     } catch (error) {
       if (axios.isAxiosError(error)) {

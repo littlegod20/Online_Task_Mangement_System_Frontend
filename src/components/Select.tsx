@@ -16,6 +16,7 @@ const Select: React.FC<SelectProps> = ({ setTaskFormData }) => {
           }))
         }
       >
+        <option value="">choose</option>
         <option value="pending">Pending</option>
         <option value="in-progress">In-progress</option>
         <option value="completed">Completed</option>
