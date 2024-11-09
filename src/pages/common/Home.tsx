@@ -8,7 +8,11 @@ import { handleInputChange } from "../../utils/form";
 import { isFormDataComplete } from "../../utils/helpers";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../state/store";
-import { fetchTasks, postTaskData, resetFetchTaskStatus } from "../../state/slices/taskSlice";
+import {
+  fetchTasks,
+  postTaskData,
+  resetFetchTaskStatus,
+} from "../../state/slices/taskSlice";
 import Select from "../../components/Select";
 
 export interface TaskProps {
@@ -16,13 +20,14 @@ export interface TaskProps {
   description: string;
   date: Date;
   status: "pending" | "in-progress" | "completed";
+  id?: string;
 }
 
 const Home = () => {
   const [taskFormData, setTaskFormData] = useState<TaskProps>(taskData);
   const [isClicked, setIsClicked] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
-  const { status, error, tasks, fetchStatus } = useSelector(
+  const { status, error, tasks, fetchStatus, role } = useSelector(
     (state: RootState) => state.task
   );
 
@@ -48,29 +53,28 @@ const Home = () => {
     }
   };
 
-
-  useEffect(()=>{
-    if(fetchStatus === 'succeeded'){
-      setTaskFormData(taskData)
-    };
+  useEffect(() => {
+    if (fetchStatus === "succeeded") {
+      setTaskFormData(taskData);
+    }
     // resetting the redux status after successfull fetching
-    dispatch(resetFetchTaskStatus())
-
-    dispatch(fetchTasks())
-
-  }, [dispatch, fetchStatus])
+    dispatch(resetFetchTaskStatus());
+    dispatch(fetchTasks());
+  }, [dispatch, fetchStatus]);
 
   useEffect(() => {
-    console.log("error:", error);
-    console.log("status:", status);
     console.log("tasks:", tasks);
+    console.log("task-error", error);
+    console.log("role:", role);
   });
 
   return (
     <main className="w-full">
       <section className="p-5">
         <div className="w-16">
-          <Button title="+" onClick={() => setIsClicked(!isClicked)} />
+          {role === "user" ? (
+            <Button title="+" onClick={() => setIsClicked(!isClicked)} />
+          ) : null}
         </div>
         <Modal
           isOpen={isClicked}
@@ -101,13 +105,16 @@ const Home = () => {
         </Modal>
       </section>
       <section className="w-full">
-        <div className="flex flex-wrap gap-5 w-full">
+        <div className="flex flex-wrap gap-5 items-start w-full">
           {tasks.map((item, index) => (
             <TaskCard
-              title={item.title}
-              description={item.description}
-              date={new Date()}
-              status={item.status}
+              task={{
+                title: item.title,
+                description: item.description,
+                date: item.date,
+                status: item.status,
+                id: item.id,
+              }}
               key={index}
             />
           ))}

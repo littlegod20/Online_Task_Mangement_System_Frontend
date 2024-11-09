@@ -1,13 +1,16 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { TaskProps } from "../../pages/common/Home";
 import {
+  deleteProtectedData,
   fetchProtectedData,
   postProtectedData,
+  putProtectedData,
 } from "../../services/api.services";
 import axios from "axios";
 
 interface TaskState {
   tasks: TaskProps[];
+  role: string;
   status: "idle" | "loading" | "succeeded" | "failed";
   fetchStatus: "idle" | "loading" | "succeeded" | "failed";
   fetchError: unknown;
@@ -17,6 +20,7 @@ interface TaskState {
 
 const initialState: TaskState = {
   tasks: [],
+  role: "",
   error: null,
   status: "idle",
   fetchStatus: "idle",
@@ -61,9 +65,14 @@ const taskSlice = createSlice({
         fetchTasks.fulfilled,
         (
           state,
-          action: PayloadAction<{ success: string | boolean; tasks: [] }>
+          action: PayloadAction<{
+            success: string | boolean;
+            tasks: [];
+            role: string;
+          }>
         ) => {
           state.msg = action.payload.success;
+          state.role = action.payload.role;
           state.tasks = action.payload.tasks;
           state.error = null;
         }
@@ -88,7 +97,7 @@ export const postTaskData = createAsyncThunk(
   async (taskData: TaskProps, thunkApi) => {
     try {
       const response = await postProtectedData("/tasks", taskData);
-
+      console.log('postedTask', response)
       return response;
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -114,6 +123,38 @@ export const postTaskData = createAsyncThunk(
           status: 500,
         });
       }
+    }
+  }
+);
+
+// updating a task
+export const updateTask = createAsyncThunk(
+  "tasks/updateTask",
+  async ({ taskData, id }: { taskData: TaskProps; id: string }, thunkApi) => {
+    try {
+      const response = putProtectedData(`/tasks/${id}`, taskData);
+      return response;
+    } catch (error) {
+      return thunkApi.rejectWithValue({
+        message: error,
+        status: 500,
+      });
+    }
+  }
+);
+
+// deleting a task
+export const deleteTask = createAsyncThunk(
+  "tasks/deletedTask",
+  async (id: string, thunkApi) => {
+    try {
+      const response = deleteProtectedData(`/tasks/${id}`);
+      return response;
+    } catch (error) {
+      return thunkApi.rejectWithValue({
+        message: error,
+        status: 500,
+      });
     }
   }
 );

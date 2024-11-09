@@ -15,7 +15,7 @@ const Input: React.FC<InputProps> = ({
 }) => {
   return (
     <div className="flex flex-col space-y-2 w-full ">
-      <label id={name} htmlFor={name} className="text-red-950">
+      <label id={name} htmlFor={name} className="text-red-950 text-sm font-medium">
         {name.capitalize()}
       </label>
       <input

@@ -42,7 +42,7 @@ const SignUp = () => {
 
   return (
     <main className="w-full flex flex-col p-10 justify-center items-center min-h-screen">
-      <section className="w-full lg:w-1/2  flex flex-col justify-center ">
+      <section className="w-full  flex flex-col justify-center ">
         <div>
           <p className="text-2xl font-bold text-red-950">Welcome!</p>
           <p className="text-sm text-slate-500 italic">
@@ -64,7 +64,7 @@ const SignUp = () => {
               />
             </div>
           ))}
-          <div className="w-2/3 lg:w-1/3 pt-4 text-center">
+          <div className="w-2/3 lg:w-4/5 pt-4 text-center">
             <Button
               title="Sign In"
               loadingTitle="Signing In..."
