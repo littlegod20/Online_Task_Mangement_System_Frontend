@@ -1,8 +1,10 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { TaskProps } from "../../pages/common/Home";
 import {
+  deleteProtectedData,
   fetchProtectedData,
   postProtectedData,
+  putProtectedData,
 } from "../../services/api.services";
 import axios from "axios";
 
@@ -114,6 +116,38 @@ export const postTaskData = createAsyncThunk(
           status: 500,
         });
       }
+    }
+  }
+);
+
+// updating a task
+export const updateTask = createAsyncThunk(
+  "tasks/updateTask",
+  async ({ taskData, id }: { taskData: TaskProps; id: string }, thunkApi) => {
+    try {
+      const response = putProtectedData(`/tasks/${id}`, taskData);
+      return response;
+    } catch (error) {
+      return thunkApi.rejectWithValue({
+        message: error,
+        status: 500,
+      });
+    }
+  }
+);
+
+// deleting a task
+export const deleteTask = createAsyncThunk(
+  "tasks/deletedTask",
+  async ( id:string , thunkApi) => {
+    try {
+      const response = deleteProtectedData(`/tasks/${id}`);
+      return response;
+    } catch (error) {
+      return thunkApi.rejectWithValue({
+        message: error,
+        status: 500,
+      });
     }
   }
 );

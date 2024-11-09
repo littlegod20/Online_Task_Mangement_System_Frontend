@@ -8,7 +8,11 @@ import { handleInputChange } from "../../utils/form";
 import { isFormDataComplete } from "../../utils/helpers";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../state/store";
-import { fetchTasks, postTaskData, resetFetchTaskStatus } from "../../state/slices/taskSlice";
+import {
+  fetchTasks,
+  postTaskData,
+  resetFetchTaskStatus,
+} from "../../state/slices/taskSlice";
 import Select from "../../components/Select";
 
 export interface TaskProps {
@@ -16,6 +20,7 @@ export interface TaskProps {
   description: string;
   date: Date;
   status: "pending" | "in-progress" | "completed";
+  id?:string
 }
 
 const Home = () => {
@@ -48,17 +53,15 @@ const Home = () => {
     }
   };
 
-
-  useEffect(()=>{
-    if(fetchStatus === 'succeeded'){
-      setTaskFormData(taskData)
-    };
+  useEffect(() => {
+    if (fetchStatus === "succeeded") {
+      setTaskFormData(taskData);
+    }
     // resetting the redux status after successfull fetching
-    dispatch(resetFetchTaskStatus())
+    dispatch(resetFetchTaskStatus());
 
-    dispatch(fetchTasks())
-
-  }, [dispatch, fetchStatus])
+    dispatch(fetchTasks());
+  }, [dispatch, fetchStatus]);
 
   useEffect(() => {
     console.log("error:", error);
@@ -101,13 +104,16 @@ const Home = () => {
         </Modal>
       </section>
       <section className="w-full">
-        <div className="flex flex-wrap gap-5 w-full">
+        <div className="flex flex-wrap gap-5 items-start w-full">
           {tasks.map((item, index) => (
             <TaskCard
-              title={item.title}
-              description={item.description}
-              date={item.date}
-              status={item.status}
+              task={{
+                title: item.title,
+                description: item.description,
+                date: item.date,
+                status: item.status,
+                id:item.id
+              }}
               key={index}
             />
           ))}
