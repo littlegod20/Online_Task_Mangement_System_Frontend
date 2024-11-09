@@ -26,7 +26,7 @@ const TaskCard: React.FC<CardProps> = ({
             <Input
               placeholder={title}
               type="text"
-              name={title}
+              name="title"
               value={title}
               onChange={() => console.log("ho")}
             />
@@ -84,10 +84,10 @@ const TaskCard: React.FC<CardProps> = ({
             </div>
             <div className="w-1/2">
               <Input
-                placeholder={date.toISOString().slice(0, 10)}
+                placeholder={date.toString().slice(0, 10)}
                 type="date"
                 name="date"
-                value={date}
+                value={new Date(date)}
                 onChange={() => console.log("ho")}
               />
             </div>
@@ -98,7 +98,7 @@ const TaskCard: React.FC<CardProps> = ({
               {status}
             </p>
             <p className="text-sm text-slate-500 italic">
-              {date.toISOString().slice(0, 10)}
+              {date.toString().slice(0, 10)}
             </p>
           </>
         )}

@@ -106,7 +106,7 @@ const Home = () => {
             <TaskCard
               title={item.title}
               description={item.description}
-              date={new Date()}
+              date={item.date}
               status={item.status}
               key={index}
             />
