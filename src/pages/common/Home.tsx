@@ -20,14 +20,14 @@ export interface TaskProps {
   description: string;
   date: Date;
   status: "pending" | "in-progress" | "completed";
-  id?:string
+  id?: string;
 }
 
 const Home = () => {
   const [taskFormData, setTaskFormData] = useState<TaskProps>(taskData);
   const [isClicked, setIsClicked] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
-  const { status, error, tasks, fetchStatus } = useSelector(
+  const { status, error, tasks, fetchStatus, role } = useSelector(
     (state: RootState) => state.task
   );
 
@@ -59,21 +59,22 @@ const Home = () => {
     }
     // resetting the redux status after successfull fetching
     dispatch(resetFetchTaskStatus());
-
     dispatch(fetchTasks());
   }, [dispatch, fetchStatus]);
 
   useEffect(() => {
-    console.log("error:", error);
-    console.log("status:", status);
     console.log("tasks:", tasks);
+    console.log("task-error", error);
+    console.log("role:", role);
   });
 
   return (
     <main className="w-full">
       <section className="p-5">
         <div className="w-16">
-          <Button title="+" onClick={() => setIsClicked(!isClicked)} />
+          {role === "user" ? (
+            <Button title="+" onClick={() => setIsClicked(!isClicked)} />
+          ) : null}
         </div>
         <Modal
           isOpen={isClicked}
@@ -112,7 +113,7 @@ const Home = () => {
                 description: item.description,
                 date: item.date,
                 status: item.status,
-                id:item.id
+                id: item.id,
               }}
               key={index}
             />

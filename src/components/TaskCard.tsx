@@ -33,17 +33,17 @@ const TaskCard: React.FC<CardProps> = ({ task }) => {
     }
   };
 
-  const handleDelete = async (id:string) => {
-    try{
+  const handleDelete = async (id: string) => {
+    try {
       const response = await dispatch(deleteTask(id));
       setIsEditting(false);
-      dispatch(fetchTasks())
-      console.log('deleted')
-      return response
-    } catch (error){
-      console.error(error)
+      dispatch(fetchTasks());
+      console.log("deleted");
+      return response;
+    } catch (error) {
+      console.error(error);
     }
-  }
+  };
 
   return (
     <section className="flex flex-col min-w-80 w-[350px] max-w-96 border p-3 justify-center items-center space-y-3 rounded-lg shadow-md shadow-slate-500">
@@ -119,7 +119,17 @@ const TaskCard: React.FC<CardProps> = ({ task }) => {
             </>
           ) : (
             <>
-              <p className="text-xs py-1 px-2 font-bold bg-slate-400 rounded-full opacity-80">
+              <p
+                className={`text-xs py-1 px-2 font-bold  ${
+                  task.status === "pending"
+                    ? "bg-slate-400"
+                    : task.status === "in-progress"
+                    ? "bg-yellow-500"
+                    : task.status === "completed"
+                    ? "bg-emerald-600"
+                    : ""
+                } rounded-full opacity-80`}
+              >
                 {task.status}
               </p>
               <p className="text-sm text-slate-500 italic">

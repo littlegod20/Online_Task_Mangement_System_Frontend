@@ -10,6 +10,7 @@ import axios from "axios";
 
 interface TaskState {
   tasks: TaskProps[];
+  role: string;
   status: "idle" | "loading" | "succeeded" | "failed";
   fetchStatus: "idle" | "loading" | "succeeded" | "failed";
   fetchError: unknown;
@@ -19,6 +20,7 @@ interface TaskState {
 
 const initialState: TaskState = {
   tasks: [],
+  role: "",
   error: null,
   status: "idle",
   fetchStatus: "idle",
@@ -63,9 +65,14 @@ const taskSlice = createSlice({
         fetchTasks.fulfilled,
         (
           state,
-          action: PayloadAction<{ success: string | boolean; tasks: [] }>
+          action: PayloadAction<{
+            success: string | boolean;
+            tasks: [];
+            role: string;
+          }>
         ) => {
           state.msg = action.payload.success;
+          state.role = action.payload.role;
           state.tasks = action.payload.tasks;
           state.error = null;
         }
@@ -139,7 +146,7 @@ export const updateTask = createAsyncThunk(
 // deleting a task
 export const deleteTask = createAsyncThunk(
   "tasks/deletedTask",
-  async ( id:string , thunkApi) => {
+  async (id: string, thunkApi) => {
     try {
       const response = deleteProtectedData(`/tasks/${id}`);
       return response;
