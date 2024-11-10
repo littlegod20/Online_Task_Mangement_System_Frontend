@@ -14,6 +14,7 @@ import {
   resetFetchTaskStatus,
 } from "../../state/slices/taskSlice";
 import Select from "../../components/Select";
+import { useNavigate } from "react-router-dom";
 
 export interface TaskProps {
   title: string;
@@ -24,6 +25,7 @@ export interface TaskProps {
 }
 
 const Home = () => {
+  const navigate = useNavigate();
   const [taskFormData, setTaskFormData] = useState<TaskProps>(taskData);
   const [isClicked, setIsClicked] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
@@ -61,6 +63,10 @@ const Home = () => {
     dispatch(resetFetchTaskStatus());
     dispatch(fetchTasks());
   }, [dispatch, fetchStatus]);
+
+  const handleTaskClick = (id: string) => {
+    navigate(`/tasks/${id}`);
+  };
 
   useEffect(() => {
     console.log("tasks:", tasks);
@@ -115,6 +121,7 @@ const Home = () => {
                 status: item.status,
                 id: item.id,
               }}
+              onClick={() => handleTaskClick(item.id!)}
               key={index}
             />
           ))}
