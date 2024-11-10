@@ -15,6 +15,8 @@ import {
 } from "../../state/slices/taskSlice";
 import Select from "../../components/Select";
 import { useNavigate } from "react-router-dom";
+import { LogOut } from "lucide-react";
+import { useAuth } from "../../hooks/useAuth";
 
 export interface TaskProps {
   title: string;
@@ -28,10 +30,13 @@ const Home = () => {
   const navigate = useNavigate();
   const [taskFormData, setTaskFormData] = useState<TaskProps>(taskData);
   const [isClicked, setIsClicked] = useState(false);
-  const dispatch = useDispatch<AppDispatch>();
+
   const { status, error, tasks, fetchStatus, role } = useSelector(
     (state: RootState) => state.task
   );
+  const dispatch = useDispatch<AppDispatch>();
+
+  const { logout } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -77,10 +82,16 @@ const Home = () => {
   return (
     <main className="w-full">
       <section className="p-5">
-        <div className="w-16">
-          {role === "user" ? (
-            <Button title="+" onClick={() => setIsClicked(!isClicked)} />
-          ) : null}
+        <div className="flex justify-between">
+          <div className="w-16">
+            {role === "user" ? (
+              <Button title="+" onClick={() => setIsClicked(!isClicked)} />
+            ) : null}
+          </div>
+
+          <div className="flex justify-center items-center">
+            <Button title={LogOut} onClick={() => logout()} />
+          </div>
         </div>
         <Modal
           isOpen={isClicked}
