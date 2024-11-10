@@ -28,14 +28,11 @@ function App() {
           <Route
             path="/tasks/:id"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={["user"]}>
                 <Task />
               </ProtectedRoute>
             }
           />
-
-          {/* 404 route */}
-          {/* <Route path="*" element={''} /> */}
         </Routes>
       </BrowserRouter>
     </main>
