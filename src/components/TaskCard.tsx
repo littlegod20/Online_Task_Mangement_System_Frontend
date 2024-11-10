@@ -120,9 +120,9 @@ const TaskCard: React.FC<CardProps> = ({ task }) => {
           ) : (
             <>
               <p
-                className={`text-xs py-1 px-2 font-bold  ${
+                className={`text-xs py-1 px-2 font-bold text-slate-100  ${
                   task.status === "pending"
-                    ? "bg-slate-400"
+                    ? "bg-sky-600"
                     : task.status === "in-progress"
                     ? "bg-yellow-500"
                     : task.status === "completed"

@@ -4,7 +4,7 @@ import { AuthProps } from "../types/auth.types";
 interface AuthContextType {
   user: AuthProps | null;
   isAuthenticated: boolean;
-  login: (user: AuthProps) => void;
+  login: (user: AuthProps | null) => void;
   logout: () => void;
 }
 
@@ -15,7 +15,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [user, setUser] = useState<AuthProps | null>(null);
 
-  const login = (userData: AuthProps) => {
+  const login = (userData: AuthProps | null) => {
     setUser(userData);
   };
 
@@ -32,13 +32,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 };
 
-
 // eslint-disable-next-line react-refresh/only-export-components
-export const useAuth = () =>{
+export const useAuth = () => {
   const context = useContext(AuthContext);
-  
-  if(!context){
-    throw new Error('useAuth must be used within an AuthProvider')
+
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
   }
-  return context
-}
+  return context;
+};
