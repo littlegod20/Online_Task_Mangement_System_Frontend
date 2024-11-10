@@ -1,7 +1,7 @@
 import Button from "../../components/common/Button";
 import Input from "../../components/common/Input";
 import { Link, useNavigate } from "react-router-dom";
-import { formInputs, userData } from "../../utils/constants";
+import { formInputs, initalUser } from "../../utils/constants";
 import { handleInputChange } from "../../utils/form";
 import { useEffect, useState } from "react";
 import { AuthProps } from "../../types/auth.types";
@@ -11,7 +11,7 @@ import { postUserData } from "../../state/slices/authSlice";
 import { isFormDataComplete } from "../../utils/helpers";
 
 const SignUp = () => {
-  const [formData, setFormData] = useState<AuthProps>(userData);
+  const [formData, setFormData] = useState<AuthProps>(initalUser);
   const dispatch = useDispatch<AppDispatch>();
   const { status, error } = useSelector((state: RootState) => state.auth);
 
@@ -26,7 +26,7 @@ const SignUp = () => {
         ).unwrap();
         console.log("Server response:", response);
         navigate("/login");
-        setFormData(userData);
+        setFormData(initalUser);
       } else {
         console.log("Please fill in all fields.");
       }

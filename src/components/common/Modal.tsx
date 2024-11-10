@@ -10,7 +10,7 @@ interface ModalProps {
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
   if (!isOpen) return null;
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-transparent z-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-opacity-50 bg-black z-50">
       
       <div className="fixed inset-0 transition-opacity flex justify-center w-full items-center ">
         {/* main card */}

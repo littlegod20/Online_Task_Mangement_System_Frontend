@@ -2,17 +2,15 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 import { AuthProps } from "../../types/auth.types";
 
-interface AuthState extends AuthProps {
+interface AuthState {
+  userData: AuthProps | null;
   status: "idle" | "loading" | "succeeded" | "failed";
   error: unknown;
   token: string;
 }
 
 const initialState: AuthState = {
-  username: "",
-  email: "",
-  password: "",
-  role: "user",
+  userData: null,
   status: "idle",
   error: null,
   token: "",
@@ -25,10 +23,13 @@ const authSlice = createSlice({
     setToken: (state, action: PayloadAction<string>) => {
       state.token = action.payload;
     },
-    logout(state) {
-      state.username = "";
-      state.email = "";
-    },
+    // logout(state) {
+    //   if (state.userData && state.userData.email && state.userData.role) {
+    //     state.userData.username = "";
+    //     state.userData.email = "";
+    //     state.userData.role = '';
+    //   }
+    // },
   },
   extraReducers: (builder) => {
     builder
@@ -41,6 +42,7 @@ const authSlice = createSlice({
           state.status = "succeeded";
           state.error = null;
           state.token = action.payload;
+          // state.userData = action.payload.
         }
       )
       .addCase(
@@ -52,8 +54,6 @@ const authSlice = createSlice({
       );
   },
 });
-
-
 
 export const postUserData = createAsyncThunk(
   "authentication/postUserData",
@@ -81,6 +81,7 @@ export const postUserData = createAsyncThunk(
           userData
         );
         console.log("User data submitted successfully");
+        console.log(response)
         const token = response.data.accesstoken;
         localStorage.setItem("accessToken", token);
         return token;

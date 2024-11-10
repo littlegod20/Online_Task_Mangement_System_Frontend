@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import Button from "../../components/common/Button";
 import Input from "../../components/common/Input";
-import { LogInformInputs, userData } from "../../utils/constants";
+import { LogInformInputs, initalUser } from "../../utils/constants";
 import { useEffect, useState } from "react";
 import { AuthProps } from "../../types/auth.types";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,6 +9,10 @@ import { AppDispatch, RootState } from "../../state/store";
 import { postUserData } from "../../state/slices/authSlice";
 import { handleInputChange } from "../../utils/form";
 import { isFormDataComplete } from "../../utils/helpers";
+import { useAuth } from "../../hooks/useAuth";
+import { fetchUser } from "../../state/slices/userSlice";
+// import { fetchUser } from "../../state/slices/userSlice";
+// import { useAuth } from "../../hooks/useAuth";
 
 const Login = () => {
   const [formData, setFormData] = useState<Partial<AuthProps>>({
@@ -18,6 +22,7 @@ const Login = () => {
   });
   const dispatch = useDispatch<AppDispatch>();
   const { status, error } = useSelector((state: RootState) => state.auth);
+  const { login } = useAuth();
 
   const navigate = useNavigate();
 
@@ -28,14 +33,21 @@ const Login = () => {
         const response = await dispatch(
           postUserData({ userData: formData, type: "login" })
         ).unwrap();
-        setFormData(userData);
+
+        // after logging in, we fetch the user details from the server using a protected apiClient
+        const userData = await dispatch(fetchUser()).unwrap();
+
+        //use the fetched user data in protected routes
+        login(userData);
+        console.log("from Protected user:", userData);
+        setFormData(initalUser);
         navigate("/home");
         return response;
       } else {
         console.log("Please fill in all fields.");
       }
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error:", error instanceof Error ? error.message : error);
     }
   };
 
@@ -58,9 +70,8 @@ const Login = () => {
           onSubmit={handleSubmit}
         >
           {LogInformInputs.map((item, index) => (
-            <div className="sm:w-[400px]">
+            <div className="sm:w-[400px]" key={index}>
               <Input
-                key={index}
                 name={item.label}
                 placeholder={item.placeholder}
                 value={formData[item.label as keyof AuthProps]}
@@ -75,6 +86,8 @@ const Login = () => {
               loadingTitle="Logging In..."
               disabled={status === "loading"}
             />
+
+            {error ? <p>Failed to login Please try again</p> : ""}
 
             <p className="text-sm pt-3 text-slate-500">
               Don't have an account? sign up{" "}

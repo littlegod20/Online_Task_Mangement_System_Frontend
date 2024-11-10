@@ -105,7 +105,7 @@ const Home = () => {
         </Modal>
       </section>
       <section className="w-full">
-        <div className="flex flex-wrap gap-5 items-start w-full">
+        <div className="flex flex-wrap gap-5 items-start w-full p-5">
           {tasks.map((item, index) => (
             <TaskCard
               task={{
