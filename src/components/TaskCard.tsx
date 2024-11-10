@@ -10,9 +10,10 @@ import { deleteTask, fetchTasks, updateTask } from "../state/slices/taskSlice";
 
 interface CardProps {
   task: TaskProps;
+  onClick?: () => void;
 }
 
-const TaskCard: React.FC<CardProps> = ({ task }) => {
+const TaskCard: React.FC<CardProps> = ({ task, onClick }) => {
   const [isEditing, setIsEditting] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
 
@@ -46,7 +47,10 @@ const TaskCard: React.FC<CardProps> = ({ task }) => {
   };
 
   return (
-    <section className="flex flex-col min-w-80 w-[350px] max-w-96 border p-3 justify-center items-center space-y-3 rounded-lg shadow-md shadow-slate-500">
+    <section
+      className="flex flex-col min-w-80 w-[350px] max-w-96 border p-3 justify-center items-center space-y-3 rounded-lg shadow-md shadow-slate-500 hover:cursor-pointer"
+      onClick={onClick}
+    >
       <>
         <div className="flex flex-col w-full space-y-3">
           <div className="flex flex-row justify-between items-start">
