@@ -7,3 +7,8 @@ export const isFormDataComplete = (
 ) => {
   return Object.values(data).every((item) => item !== "" && item !== null);
 };
+
+
+export const isEmpty = (data:object)=>{
+  return Object.values(data).every((item)=> item !== "" && item !==null)
+}

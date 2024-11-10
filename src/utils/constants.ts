@@ -1,6 +1,6 @@
 import { AuthProps } from "../types/auth.types";
 
-export const userData: AuthProps = {
+export const initalUser: AuthProps = {
   username: "",
   email: "",
   password: "",
