@@ -4,6 +4,7 @@ import SignUp from "./pages/auth/SignUp";
 import Login from "./pages/auth/Login";
 import Home from "./pages/common/Home";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import Task from "./pages/Task";
 // import { ProtectedRoute } from "./components/ProtectedRoute";
 
 function App() {
@@ -21,6 +22,14 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={["admin", "user"]}>
                 <Home />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/home/:id"
+            element={
+              <ProtectedRoute>
+                <Task />
               </ProtectedRoute>
             }
           />

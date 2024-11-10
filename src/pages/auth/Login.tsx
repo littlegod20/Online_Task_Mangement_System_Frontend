@@ -1,8 +1,8 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import Button from "../../components/common/Button";
 import Input from "../../components/common/Input";
 import { LogInformInputs, initalUser } from "../../utils/constants";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { AuthProps } from "../../types/auth.types";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../state/store";
@@ -11,9 +11,6 @@ import { handleInputChange } from "../../utils/form";
 import { isFormDataComplete } from "../../utils/helpers";
 import { useAuth } from "../../hooks/useAuth";
 import { fetchUser } from "../../state/slices/userSlice";
-// import { fetchUser } from "../../state/slices/userSlice";
-// import { useAuth } from "../../hooks/useAuth";
-
 const Login = () => {
   const [formData, setFormData] = useState<Partial<AuthProps>>({
     username: "",
@@ -22,9 +19,13 @@ const Login = () => {
   });
   const dispatch = useDispatch<AppDispatch>();
   const { status, error } = useSelector((state: RootState) => state.auth);
-  const { login } = useAuth();
-
+  const { login, isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
+
+  // if the user is already authenticated, redirect home
+  if (isAuthenticated && user) {
+    return <Navigate to="/home" replace />;
+  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -50,11 +51,6 @@ const Login = () => {
       console.error("Error:", error instanceof Error ? error.message : error);
     }
   };
-
-  useEffect(() => {
-    console.log("error:", error);
-    console.log("status:", status);
-  });
 
   return (
     <main className="w-full flex flex-col p-10 justify-center items-center min-h-screen">
