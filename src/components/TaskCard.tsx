@@ -47,10 +47,7 @@ const TaskCard: React.FC<CardProps> = ({ task, onClick }) => {
   };
 
   return (
-    <section
-      className="flex flex-col min-w-80 w-[350px] max-w-96 border p-3 justify-center items-center space-y-3 rounded-lg shadow-md shadow-slate-500 hover:cursor-pointer"
-      onClick={onClick}
-    >
+    <section className="flex flex-col min-w-80 w-[350px] max-w-96 border p-3 justify-center items-center space-y-3 rounded-lg shadow-md shadow-slate-500 ">
       <>
         <div className="flex flex-col w-full space-y-3">
           <div className="flex flex-row justify-between items-start">
@@ -63,7 +60,10 @@ const TaskCard: React.FC<CardProps> = ({ task, onClick }) => {
                 onChange={(e) => handleInputChange(e, setTaskData)}
               />
             ) : (
-              <header className="font-bold capitalize text-red-900">
+              <header
+                className="font-bold capitalize text-red-900 hover:cursor-pointer"
+                onClick={onClick}
+              >
                 {task.title}
               </header>
             )}

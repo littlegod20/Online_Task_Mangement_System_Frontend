@@ -33,7 +33,9 @@ const Task = () => {
           </div>
         </>
       ) : (
-        <p>No task</p>
+        <div className="flex justify-center items-center min-h-screen">
+          <p>Admins can't view single task</p>
+        </div>
       )}
     </div>
   );
