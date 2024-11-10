@@ -10,6 +10,7 @@ import axios from "axios";
 
 interface TaskState {
   tasks: TaskProps[];
+  task: TaskProps | null;
   role: string;
   status: "idle" | "loading" | "succeeded" | "failed";
   fetchStatus: "idle" | "loading" | "succeeded" | "failed";
@@ -20,6 +21,7 @@ interface TaskState {
 
 const initialState: TaskState = {
   tasks: [],
+  task: null,
   role: "",
   error: null,
   status: "idle",
@@ -80,7 +82,13 @@ const taskSlice = createSlice({
       .addCase(fetchTasks.rejected, (state, action: PayloadAction<unknown>) => {
         state.fetchStatus = "failed";
         state.fetchError = action.payload;
-      });
+      })
+      .addCase(
+        fetchATask.fulfilled,
+        (state, action: PayloadAction<TaskProps>) => {
+          state.task = action.payload;
+        }
+      );
   },
 });
 
@@ -91,13 +99,22 @@ export const fetchTasks = createAsyncThunk("tasks/fetchTasks", async () => {
   return response;
 });
 
+export const fetchATask = createAsyncThunk(
+  "task/fetchATask",
+  async (id: string) => {
+    const response = await fetchProtectedData(`/tasks/${id}`);
+    console.log("a task:", response);
+    return response.task
+  }
+);
+
 // creating a task
 export const postTaskData = createAsyncThunk(
   "tasks/postTaskData",
   async (taskData: TaskProps, thunkApi) => {
     try {
       const response = await postProtectedData("/tasks", taskData);
-      console.log('postedTask', response)
+      console.log("postedTask", response);
       return response;
     } catch (error) {
       if (axios.isAxiosError(error)) {
