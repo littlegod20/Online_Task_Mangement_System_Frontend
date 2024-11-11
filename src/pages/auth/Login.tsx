@@ -83,7 +83,21 @@ const Login = () => {
               disabled={status === "loading"}
             />
 
-            {error ? <p>Failed to login Please try again</p> : ""}
+            {error ? (
+              <div className="pt-2">
+                <p className="text-red-600">{String(error)}</p>
+              </div>
+            ) : (
+              ""
+            )}
+
+            {status === "succeeded" ? (
+              <div>
+                <p>login Successful</p>
+              </div>
+            ) : (
+              ""
+            )}
 
             <p className="text-sm pt-3 text-slate-500">
               Don't have an account? sign up{" "}

@@ -49,7 +49,10 @@ const authSlice = createSlice({
         postUserData.rejected,
         (state, action: PayloadAction<unknown>) => {
           state.status = "failed";
-          state.error = action.payload;
+          state.error =
+            typeof action.payload === "string"
+              ? action.payload
+              : action.payload;
         }
       );
   },
@@ -81,7 +84,7 @@ export const postUserData = createAsyncThunk(
           userData
         );
         console.log("User data submitted successfully");
-        console.log(response)
+        console.log(response);
         const token = response.data.accesstoken;
         localStorage.setItem("accessToken", token);
         return token;
@@ -89,26 +92,14 @@ export const postUserData = createAsyncThunk(
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response) {
-          return thunkApi.rejectWithValue({
-            message: error.response.data,
-            status: error.response.status,
-          });
+          return thunkApi.rejectWithValue(error.response.data.message);
         } else if (error.request) {
-          return thunkApi.rejectWithValue({
-            message: "No response from the server",
-            status: 500,
-          });
+          return thunkApi.rejectWithValue("No response from the server");
         } else {
-          return thunkApi.rejectWithValue({
-            message: error.message,
-            status: 500,
-          });
+          return thunkApi.rejectWithValue(error.message);
         }
       } else {
-        return thunkApi.rejectWithValue({
-          message: String(error),
-          status: 500,
-        });
+        return thunkApi.rejectWithValue(String(error));
       }
     }
   }
