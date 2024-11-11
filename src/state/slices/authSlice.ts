@@ -92,7 +92,7 @@ export const postUserData = createAsyncThunk(
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response) {
-          return thunkApi.rejectWithValue(error.response.data.message);
+          return thunkApi.rejectWithValue(error.response.data.msg);
         } else if (error.request) {
           return thunkApi.rejectWithValue("No response from the server");
         } else {

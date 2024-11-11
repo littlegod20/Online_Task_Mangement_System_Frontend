@@ -91,13 +91,6 @@ const Login = () => {
               ""
             )}
 
-            {status === "succeeded" ? (
-              <div>
-                <p>login Successful</p>
-              </div>
-            ) : (
-              ""
-            )}
 
             <p className="text-sm pt-3 text-slate-500">
               Don't have an account? sign up{" "}
