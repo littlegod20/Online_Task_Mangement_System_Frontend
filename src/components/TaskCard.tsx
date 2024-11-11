@@ -70,14 +70,14 @@ const TaskCard: React.FC<CardProps> = ({ task, onClick }) => {
             <div className="flex">
               <button
                 className="p-1 hover:bg-gray-300 rounded-full transition-colors"
-                onClick={() => setIsEditting(!isEditing)}
+                onClick={
+                  isEditing
+                    ? () => handleSave(task.id ? task.id : "1")
+                    : () => setIsEditting(!isEditing)
+                }
               >
                 {isEditing ? (
-                  <Save
-                    size={20}
-                    color="gray"
-                    onClick={() => handleSave(task.id ? task.id : "1")}
-                  />
+                  <Save size={20} color="gray" />
                 ) : (
                   <Edit size={20} color="gray" />
                 )}
