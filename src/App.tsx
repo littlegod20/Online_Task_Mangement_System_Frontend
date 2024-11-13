@@ -16,6 +16,8 @@ function App() {
             <Route index element={<SignUp />} />
             <Route path="/login" element={<Login />} />
           </Route>
+
+          {/* protected proutes */}
           <Route
             path="/home"
             element={

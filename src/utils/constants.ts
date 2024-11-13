@@ -4,7 +4,7 @@ export const initalUser: AuthProps = {
   username: "",
   email: "",
   password: "",
-  role: "user",
+  // role: "user",
 };
 
 export const formInputs = [
@@ -20,10 +20,10 @@ export const formInputs = [
     label: "password",
     placeholder: "Enter strong password",
   },
-  {
-    label: "role",
-    placeholder: "eg. user or admin",
-  },
+  // {
+  //   label: "role",
+  //   placeholder: "eg. user or admin",
+  // },
 ];
 
 export const LogInformInputs = [

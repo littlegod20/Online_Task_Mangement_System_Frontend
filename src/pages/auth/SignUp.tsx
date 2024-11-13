@@ -64,12 +64,33 @@ const SignUp = () => {
               />
             </div>
           ))}
+          <div className="w-full">
+            <select
+              className="p-2 rounded-lg"
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  role: e.target.value as "user" | "admin",
+                }))
+              }
+              required
+            >
+              <option value="">Select role</option>
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
           <div className="w-2/3 lg:w-4/5 pt-4 text-center">
             <Button
-              title="Sign In"
-              loadingTitle="Signing In..."
+              title="Sign Up"
+              loadingTitle="Signing Up..."
               disabled={status === "loading"}
             />
+
+            <div className="pt-2">
+              <p className="text-red-600">{error ? String(error) : ""}</p>
+            </div>
+
             <p className="text-sm pt-3 text-slate-500">
               Already signed up? login in{" "}
               <Link

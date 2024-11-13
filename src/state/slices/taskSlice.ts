@@ -93,18 +93,51 @@ const taskSlice = createSlice({
 });
 
 // fetching tasks
-export const fetchTasks = createAsyncThunk("tasks/fetchTasks", async () => {
-  const response = await fetchProtectedData("/tasks");
-  console.log("from fetchtasks:", response);
-  return response;
-});
+export const fetchTasks = createAsyncThunk(
+  "tasks/fetchTasks",
+  async (_arg, thunkAPI) => {
+    try {
+      const response = await fetchProtectedData("/tasks");
+      console.log("from fetchtasks:", response);
+      return response;
+    } catch (error) {
+      console.log("error fetching tasks", error);
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          console.log(
+            'thunk', error.response
+          )
+          return thunkAPI.rejectWithValue({
+            message: error.response.data.error,
+            status: error.response.status,
+          });
+        } else if (error.request) {
+          return thunkAPI.rejectWithValue({
+            message: "No response from the server",
+            status: 500,
+          });
+        } else {
+          return thunkAPI.rejectWithValue({
+            message: error.message,
+            status: 500,
+          });
+        }
+      } else {
+        return thunkAPI.rejectWithValue({
+          message: String(error),
+          status: 500,
+        });
+      }
+    }
+  }
+);
 
 export const fetchATask = createAsyncThunk(
   "task/fetchATask",
   async (id: string) => {
     const response = await fetchProtectedData(`/tasks/${id}`);
     console.log("a task:", response);
-    return response.task
+    return response;
   }
 );
 
