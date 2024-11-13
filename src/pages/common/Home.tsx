@@ -15,8 +15,6 @@ import {
 } from "../../state/slices/taskSlice";
 import Select from "../../components/Select";
 import { useNavigate } from "react-router-dom";
-import { LogOut } from "lucide-react";
-import { useAuth } from "../../hooks/useAuth";
 
 export interface TaskProps {
   title: string;
@@ -31,12 +29,11 @@ const Home = () => {
   const [taskFormData, setTaskFormData] = useState<TaskProps>(taskData);
   const [isClicked, setIsClicked] = useState(false);
 
-  const { status, error, tasks, fetchStatus, role } = useSelector(
+  const { status, tasks, fetchStatus } = useSelector(
     (state: RootState) => state.task
   );
+  const { role } = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch<AppDispatch>();
-
-  const { logout } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -66,18 +63,22 @@ const Home = () => {
     }
     // resetting the redux status after successfull fetching
     dispatch(resetFetchTaskStatus());
-    dispatch(fetchTasks());
+
+    // fetching tasks
+    dispatch(fetchTasks())
+      .then((response) => console.log(response))
+      .catch((error) => console.log(error));
   }, [dispatch, fetchStatus]);
 
   const handleTaskClick = (id: string) => {
     navigate(`/tasks/${id}`);
   };
 
-  useEffect(() => {
-    console.log("tasks:", tasks);
-    console.log("task-error", error);
-    console.log("role:", role);
-  });
+  // useEffect(() => {
+  //   console.log("tasks:", tasks);
+  //   console.log("fetchStatus", fetchStatus);
+  //   console.log("fetchError", fetchError);
+  // });
 
   return (
     <main className="w-full">
@@ -89,9 +90,7 @@ const Home = () => {
             ) : null}
           </div>
 
-          <div className="flex justify-center items-center">
-            <Button title={LogOut} onClick={() => logout()} />
-          </div>
+          <div className="flex justify-center items-center"></div>
         </div>
         <Modal
           isOpen={isClicked}

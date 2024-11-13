@@ -64,6 +64,22 @@ const SignUp = () => {
               />
             </div>
           ))}
+          <div className="w-full">
+            <select
+              className="p-2 rounded-lg"
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  role: e.target.value as "user" | "admin",
+                }))
+              }
+              required
+            >
+              <option value="">Select role</option>
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
           <div className="w-2/3 lg:w-4/5 pt-4 text-center">
             <Button
               title="Sign Up"

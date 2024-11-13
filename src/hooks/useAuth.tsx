@@ -1,11 +1,15 @@
-import { createContext, useContext, useState } from "react";
-import { AuthProps } from "../types/auth.types";
+import { createContext, useContext, useLayoutEffect } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../state/store";
+import apiClient from "../utils/apiClient";
+import { setToken } from "../state/slices/authSlice";
+import axios from "axios";
+import Cookies from "js-cookie";
 
 interface AuthContextType {
-  user: AuthProps | null;
+  token: string | null;
   isAuthenticated: boolean;
-  login: (user: AuthProps | null) => void;
-  logout: () => void;
+  role: "user" | "admin" | null;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -13,28 +17,64 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [user, setUser] = useState<AuthProps | null>(() => {
-    const savedUser = localStorage.getItem("user");
-    return savedUser ? JSON.parse(savedUser) : null;
-  });
+  const { token, role } = useSelector((state: RootState) => state.auth);
 
-  const login = (userData: AuthProps | null) => {
-    setUser(userData);
+  useLayoutEffect(() => {
+    const originalResponse = apiClient.interceptors.request.use((config) => {
+      config.headers.Authorization = token
+        ? `Bearer ${token}`
+        : config.headers.Authorization;
 
-    if (userData) {
-      localStorage.setItem("user", JSON.stringify(userData));
-    }
-  };
+      config.withCredentials = true;
+      return config;
+    });
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem("user");
-  };
+    console.log("original:", token);
+
+    return () => {
+      apiClient.interceptors.request.eject(originalResponse);
+    };
+  }, [token]);
+
+  useLayoutEffect(() => {
+    const refreshResponse = apiClient.interceptors.response.use(
+      (response) => response,
+      async (error) => {
+        const originalResponse = error.config;
+
+        console.log("refreshing token");
+
+        if (error.response.status === 401 && !originalResponse._retry) {
+          originalResponse._retry = true;
+          try {
+            console.log("cookie:", Cookies.get("refreshToken"));
+            const response = await apiClient.get("/refresh", {
+              withCredentials: true,
+              headers: { Cookie: Cookies.get("refreshToken") },
+            });
+
+            setToken(response.data.accesstoken);
+
+            console.log("refreshed token:", response.data.accesstoken);
+
+            originalResponse.headers.Authorization = `Bearer ${response.data.accesstoken}`;
+            return axios(originalResponse);
+          } catch {
+            console.log("no refreshing");
+            setToken(null);
+          }
+        }
+        return Promise.reject(error);
+      }
+    );
+
+    return () => {
+      apiClient.interceptors.response.eject(refreshResponse);
+    };
+  },[]);
 
   return (
-    <AuthContext.Provider
-      value={{ user, isAuthenticated: !!user, login, logout }}
-    >
+    <AuthContext.Provider value={{ isAuthenticated: !!token, token, role }}>
       {children}
     </AuthContext.Provider>
   );

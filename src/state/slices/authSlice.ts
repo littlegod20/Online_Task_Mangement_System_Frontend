@@ -6,7 +6,8 @@ interface AuthState {
   userData: AuthProps | null;
   status: "idle" | "loading" | "succeeded" | "failed";
   error: unknown;
-  token: string;
+  token: string | null;
+  role: "user" | "admin" | null;
 }
 
 const initialState: AuthState = {
@@ -14,21 +15,18 @@ const initialState: AuthState = {
   status: "idle",
   error: null,
   token: "",
+  role: null,
 };
 
 const authSlice = createSlice({
   name: "authentication",
   initialState,
   reducers: {
-    setToken: (state, action: PayloadAction<string>) => {
+    setToken: (state, action: PayloadAction<string | null>) => {
       state.token = action.payload;
     },
     // logout(state) {
-    //   if (state.userData && state.userData.email && state.userData.role) {
-    //     state.userData.username = "";
-    //     state.userData.email = "";
-    //     state.userData.role = '';
-    //   }
+    //   state.role = null
     // },
   },
   extraReducers: (builder) => {
@@ -38,11 +36,14 @@ const authSlice = createSlice({
       })
       .addCase(
         postUserData.fulfilled,
-        (state, action: PayloadAction<string>) => {
+        (
+          state,
+          action: PayloadAction<{ accesstoken: string; role: "user" | "admin" }>
+        ) => {
           state.status = "succeeded";
           state.error = null;
-          state.token = action.payload;
-          // state.userData = action.payload.
+          state.token = action.payload.accesstoken;
+          state.role = action.payload.role;
         }
       )
       .addCase(
@@ -84,10 +85,9 @@ export const postUserData = createAsyncThunk(
           userData
         );
         console.log("User data submitted successfully");
-        console.log(response);
-        const token = response.data.accesstoken;
-        localStorage.setItem("accessToken", token);
-        return token;
+        //  localStorage.setItem("accessToken", response.data.accesstoken)
+        // console.log("response from postUserData reducer:", response.data);
+        return response.data;
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {

@@ -10,7 +10,7 @@ import { postUserData } from "../../state/slices/authSlice";
 import { handleInputChange } from "../../utils/form";
 import { isFormDataComplete } from "../../utils/helpers";
 import { useAuth } from "../../hooks/useAuth";
-import { fetchUser } from "../../state/slices/userSlice";
+
 const Login = () => {
   const [formData, setFormData] = useState<Partial<AuthProps>>({
     username: "",
@@ -19,11 +19,11 @@ const Login = () => {
   });
   const dispatch = useDispatch<AppDispatch>();
   const { status, error } = useSelector((state: RootState) => state.auth);
-  const { login, isAuthenticated, user } = useAuth();
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   // if the user is already authenticated, redirect home
-  if (isAuthenticated && user) {
+  if (isAuthenticated) {
     return <Navigate to="/home" replace />;
   }
 
@@ -35,12 +35,6 @@ const Login = () => {
           postUserData({ userData: formData, type: "login" })
         ).unwrap();
 
-        // after logging in, we fetch the user details from the server using a protected apiClient
-        const userData = await dispatch(fetchUser()).unwrap();
-
-        //use the fetched user data in protected routes
-        login(userData);
-        console.log("from Protected user:", userData);
         setFormData(initalUser);
         navigate("/home");
         return response;
@@ -90,7 +84,6 @@ const Login = () => {
             ) : (
               ""
             )}
-
 
             <p className="text-sm pt-3 text-slate-500">
               Don't have an account? sign up{" "}
