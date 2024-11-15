@@ -54,9 +54,8 @@ const SignUp = () => {
           onSubmit={handleSubmit}
         >
           {formInputs.map((item, index) => (
-            <div className="sm:w-[400px]">
+            <div className="sm:w-[400px]" key={index}>
               <Input
-                key={index}
                 onChange={(e) => handleInputChange(e, setFormData)}
                 name={item.label}
                 value={formData[item.label as keyof AuthProps]}

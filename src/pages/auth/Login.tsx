@@ -1,4 +1,4 @@
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import Button from "../../components/common/Button";
 import Input from "../../components/common/Input";
 import { LogInformInputs, initalUser } from "../../utils/constants";
@@ -20,7 +20,7 @@ const Login = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { status, error } = useSelector((state: RootState) => state.auth);
   const { isAuthenticated } = useAuth();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   // if the user is already authenticated, redirect home
   if (isAuthenticated) {
@@ -36,7 +36,7 @@ const Login = () => {
         ).unwrap();
         document.cookie = `refreshToken=${response.refreshToken};Domain=localhost; Expires=Thu, 14 Nov 2024 21:36:03 GMT; SameSite=Lax; Max-Age=86400; Path=/;`;
         setFormData(initalUser);
-        navigate("/home");
+        // navigate("/home");
         return response;
       } else {
         console.log("Please fill in all fields.");
