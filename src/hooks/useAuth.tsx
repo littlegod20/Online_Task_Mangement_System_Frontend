@@ -1,4 +1,4 @@
-import { createContext, useContext, useLayoutEffect } from "react";
+import { createContext, useContext, useLayoutEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../state/store";
 import apiClient from "../utils/apiClient";
@@ -10,6 +10,7 @@ interface AuthContextType {
   token: string | null;
   isAuthenticated: boolean;
   role: "user" | "admin" | null;
+  isRefreshed: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -18,6 +19,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const { token, role } = useSelector((state: RootState) => state.auth);
+  const [isRefreshed, setIsRefreshed] = useState<boolean>(false);
 
   useLayoutEffect(() => {
     const originalResponse = apiClient.interceptors.request.use((config) => {
@@ -29,7 +31,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       return config;
     });
 
-    console.log("original:", token);
 
     return () => {
       apiClient.interceptors.request.eject(originalResponse);
@@ -43,25 +44,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         const originalResponse = error.config;
 
         console.log("refreshing token");
+        console.log("error response status:", error.response.status);
+        console.log("error message:", error.response.statusText);
+        console.log("original response:", originalResponse);
+        console.log("error:", error)
 
-        if (error.response.status === 401 && !originalResponse._retry) {
+        if (error.response.status === 401 && error.response.statusText === 'Unauthorized' && !originalResponse._retry) {
           originalResponse._retry = true;
           try {
             console.log("cookie:", Cookies.get("refreshToken"));
-            const response = await apiClient.get("/refresh", {
-              withCredentials: true,
-              headers: { Cookie: Cookies.get("refreshToken") },
-            });
-
-            setToken(response.data.accesstoken);
+            const response = await axios.get(
+              `http://localhost:5000/api/refresh`,
+              {
+                withCredentials: true,
+                headers: {Cookie: Cookies.get('refreshToken')}
+              }
+            );
 
             console.log("refreshed token:", response.data.accesstoken);
+            setToken(response.data.accesstoken);
+            setIsRefreshed(true);
 
             originalResponse.headers.Authorization = `Bearer ${response.data.accesstoken}`;
             return axios(originalResponse);
           } catch {
             console.log("no refreshing");
             setToken(null);
+            setIsRefreshed(false);
           }
         }
         return Promise.reject(error);
@@ -71,10 +80,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     return () => {
       apiClient.interceptors.response.eject(refreshResponse);
     };
-  },[]);
+  }, []);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated: !!token, token, role }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated: !!token, token, role, isRefreshed }}
+    >
       {children}
     </AuthContext.Provider>
   );
