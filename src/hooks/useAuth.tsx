@@ -53,11 +53,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           originalResponse._retry = true;
           try {
             console.log("cookie:", Cookies.get("refreshToken"));
-            console.log('document cookie:', document.cookie)
             const response = await axios.get(
               `http://localhost:5000/api/refresh`,
               {
                 withCredentials: true,
+                headers: {Cookie: Cookies.get('refreshToken')}
               }
             );
 

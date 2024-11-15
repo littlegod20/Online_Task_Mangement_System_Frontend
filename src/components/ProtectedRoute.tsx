@@ -36,17 +36,3 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   return <>{children}</>;
 };
 
-// const refreshToken = async () => {
-//   console.log("something here");
-//   try {
-//     // console.log("refresh cookie:", document.cookie);
-//     const refresh = await axios.get(`http://localhost:5000/api/refresh`, {
-//       withCredentials: true,
-//       headers: { Cookie: Cookies.get("refreshToken") },
-//     });
-//     console.log("refresh data:", refresh.data.accesstoken);
-//     // setToken(refresh.data.accesstoken);
-//   } catch (error) {
-//     console.error("Error refreshing token:", error);
-//   }
-// };
