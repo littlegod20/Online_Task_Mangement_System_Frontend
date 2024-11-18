@@ -34,7 +34,6 @@ const Login = () => {
         const response = await dispatch(
           postUserData({ userData: formData, type: "login" })
         ).unwrap();
-        document.cookie = `refreshToken=${response.refreshToken};Domain=localhost; Expires=Thu, 14 Nov 2024 21:36:03 GMT; SameSite=Lax; Max-Age=86400; Path=/;`;
         setFormData(initalUser);
         // navigate("/home");
         return response;

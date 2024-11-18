@@ -55,6 +55,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
               `http://localhost:5000/api/refresh`,
               {
                 withCredentials: true,
+                headers: {Cookie: Cookies.get('refreshToken')}
               }
             );
 

@@ -85,7 +85,6 @@ export const postUserData = createAsyncThunk(
           userData
         );
         console.log("User data submitted successfully");
-        //  localStorage.setItem("accessToken", response.data.accesstoken)
         // console.log("response from postUserData reducer:", response.data);
         return response.data;
       }

@@ -62,9 +62,11 @@ const Home = () => {
       setTaskFormData(taskData);
     }
     // resetting the redux status after successfull fetching
+    console.log("reseting fetch task status");
     dispatch(resetFetchTaskStatus());
 
     // fetching tasks
+    console.log("fetching tasks");
     dispatch(fetchTasks())
       .then((response) => console.log(response))
       .catch((error) => console.log(error));
