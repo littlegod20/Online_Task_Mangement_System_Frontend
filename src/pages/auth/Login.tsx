@@ -1,4 +1,4 @@
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import Button from "../../components/common/Button";
 import Input from "../../components/common/Input";
 import { LogInformInputs, initalUser } from "../../utils/constants";
@@ -20,7 +20,7 @@ const Login = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { status, error } = useSelector((state: RootState) => state.auth);
   const { isAuthenticated } = useAuth();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   // if the user is already authenticated, redirect home
   if (isAuthenticated) {
@@ -35,7 +35,7 @@ const Login = () => {
           postUserData({ userData: formData, type: "login" })
         ).unwrap();
         setFormData(initalUser);
-        navigate("/home");
+        // navigate("/home");
         return response;
       } else {
         console.log("Please fill in all fields.");

@@ -70,17 +70,12 @@ const Home = () => {
     dispatch(fetchTasks())
       .then((response) => console.log(response))
       .catch((error) => console.log(error));
-  }, [dispatch, fetchStatus]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleTaskClick = (id: string) => {
     navigate(`/tasks/${id}`);
   };
-
-  // useEffect(() => {
-  //   console.log("tasks:", tasks);
-  //   console.log("fetchStatus", fetchStatus);
-  //   console.log("fetchError", fetchError);
-  // });
 
   return (
     <main className="w-full">

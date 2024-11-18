@@ -1,4 +1,4 @@
-import { StrictMode } from "react";
+// import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import "../src/utils/string.ts";
@@ -8,11 +8,11 @@ import { store } from "./state/store.ts";
 import { AuthProvider } from "./hooks/useAuth.tsx";
 
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
+  // <StrictMode>
     <Provider store={store}>
       <AuthProvider>
         <App />
       </AuthProvider>
     </Provider>
-  </StrictMode>
+  // </StrictMode>
 );
