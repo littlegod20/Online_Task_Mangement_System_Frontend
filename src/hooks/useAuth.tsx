@@ -9,6 +9,7 @@ import { AppDispatch, RootState } from "../state/store";
 import apiClient from "../utils/apiClient";
 import { setToken } from "../state/slices/authSlice";
 import axios from "axios";
+import Cookies from "js-cookie";
 
 interface AuthContextType {
   token: string | null;
