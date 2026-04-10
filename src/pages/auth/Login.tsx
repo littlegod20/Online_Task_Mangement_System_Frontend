@@ -71,6 +71,7 @@ const Login = () => {
 
           <div className="w-2/3 lg:w-4/5 pt-4 text-center">
             <Button
+              type="submit"
               title="Log In"
               loadingTitle="Logging In..."
               disabled={status === "loading"}

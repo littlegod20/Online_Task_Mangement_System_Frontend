@@ -81,6 +81,7 @@ const SignUp = () => {
           </div>
           <div className="w-2/3 lg:w-4/5 pt-4 text-center">
             <Button
+              type="submit"
               title="Sign Up"
               loadingTitle="Signing Up..."
               disabled={status === "loading"}

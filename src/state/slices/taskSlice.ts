@@ -73,6 +73,7 @@ const taskSlice = createSlice({
             role: string;
           }>
         ) => {
+          state.fetchStatus = "succeeded";
           state.msg = action.payload.success;
           state.role = action.payload.role;
           state.tasks = action.payload.tasks;
