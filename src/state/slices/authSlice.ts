@@ -26,9 +26,13 @@ const authSlice = createSlice({
     setToken: (state, action: PayloadAction<string | null>) => {
       state.token = action.payload;
     },
-    // logout(state) {
-    //   state.role = null
-    // },
+    logout: (state) => {
+      state.userData = null;
+      state.status = "idle";
+      state.error = null;
+      state.token = null;
+      state.role = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -98,5 +102,5 @@ export const postUserData = createAsyncThunk(
     }
   }
 );
-export const { setToken } = authSlice.actions;
+export const { setToken, logout } = authSlice.actions;
 export default authSlice.reducer;

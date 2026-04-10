@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ClipboardList, Loader2, Plus } from "lucide-react";
+import { ClipboardList, Loader2, LogOut, Plus } from "lucide-react";
 import Button from "../../components/common/Button";
 import TaskCard from "../../components/TaskCard";
 import Modal from "../../components/common/Modal";
@@ -16,6 +16,7 @@ import {
 } from "../../state/slices/taskSlice";
 import Select from "../../components/Select";
 import { useNavigate } from "react-router-dom";
+import { logout } from "../../state/slices/authSlice";
 
 export interface TaskProps {
   title: string;
@@ -67,6 +68,7 @@ const Home = () => {
   const navigate = useNavigate();
   const [taskFormData, setTaskFormData] = useState<TaskProps>(taskData);
   const [isClicked, setIsClicked] = useState(false);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
   const { status, tasks, fetchStatus, fetchError } = useSelector(
     (state: RootState) => state.task
@@ -126,6 +128,11 @@ const Home = () => {
     navigate(`/tasks/${id}`);
   };
 
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/login", { replace: true });
+  };
+
   const isInitialLoading =
     (fetchStatus === "loading" || fetchStatus === "idle") &&
     tasks.length === 0;
@@ -151,8 +158,42 @@ const Home = () => {
             ) : null}
           </div>
 
-          <div className="flex justify-center items-center"></div>
+          <div className="flex items-center gap-3">
+            <Button
+              title="Logout"
+              icon={LogOut}
+              onClick={() => setIsLogoutModalOpen(true)}
+              className="!w-auto rounded-lg px-4 py-2 text-sm font-medium shadow-sm"
+            />
+          </div>
         </div>
+        <Modal
+          isOpen={isLogoutModalOpen}
+          onClose={() => setIsLogoutModalOpen(false)}
+          title="Logout"
+        >
+          <div className="space-y-4">
+            <p className="text-sm text-slate-700">
+              Are you sure you want to log out?
+            </p>
+            <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+              <button
+                type="button"
+                className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
+                onClick={() => setIsLogoutModalOpen(false)}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="rounded-lg bg-red-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-800"
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </Modal>
         <Modal
           isOpen={isClicked}
           onClose={() => setIsClicked(false)}

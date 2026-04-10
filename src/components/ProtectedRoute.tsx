@@ -20,12 +20,12 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   console.log('isAuthenticated:',isAuthenticated)
   console.log("isRefreshed:", isRefreshed);
 
-  if (!isAuthenticated && !isRefreshed ) {
+  if (!isAuthenticated && !isRefreshed) {
     console.log("invalidToken:", token);
-    // return <Navigate to="/login" state={{ from: location }} replace />;
-  } else {
-    console.log("validtoken", token);
+    return <Navigate to="/login" replace />;
   }
+
+  console.log("validtoken", token);
 
   if (role) {
     if (allowedRoles.length > 0 && role && !allowedRoles.includes(role)) {
