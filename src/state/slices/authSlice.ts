@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
+import apiClient from "../../utils/apiClient";
 import { AuthProps } from "../../types/auth.types";
 
 interface AuthState {
@@ -73,17 +74,11 @@ export const postUserData = createAsyncThunk(
   ) => {
     try {
       if (type === "signup") {
-        const response = await axios.post(
-          "http://localhost:5000/api/auth/signUp",
-          userData
-        );
+        const response = await apiClient.post("/auth/signUp", userData);
         console.log("User data submitted successfully");
         return response.data;
       } else if (type === "login") {
-        const response = await axios.post(
-          "http://localhost:5000/api/auth/login",
-          userData
-        );
+        const response = await apiClient.post("/auth/login", userData);
         console.log("User data submitted successfully");
         // console.log("response from postUserData reducer:", response.data);
         return response.data;

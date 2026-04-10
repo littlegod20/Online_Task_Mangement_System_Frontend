@@ -8,8 +8,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../state/store";
 import apiClient from "../utils/apiClient";
 import { setToken } from "../state/slices/authSlice";
-import axios from "axios";
-import Cookies from "js-cookie";
 
 interface AuthContextType {
   token: string | null;
@@ -52,22 +50,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         ) {
           originalResponse._retry = true;
           try {
-            const response = await axios.get(
-              `http://localhost:5000/api/refresh`,
-              {
-                withCredentials: true,
-                headers: {Cookie: Cookies.get('refreshToken')}
-              }
-            );
+            const response = await apiClient.get("/refresh");
 
             dispatch(setToken(response.data.accesstoken));
             setIsRefreshed(true);
 
             originalResponse.headers.Authorization = `Bearer ${response.data.accesstoken}`;
-            return axios(originalResponse);
+            return apiClient(originalResponse);
           } catch {
             console.log("no refreshing");
-            setToken(null);
+            dispatch(setToken(null));
             setIsRefreshed(false);
           }
         }
